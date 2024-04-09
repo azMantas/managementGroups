@@ -9,7 +9,6 @@ param nonScopes array = []
 param definitionId string
 param parameters object
 
-
 resource policyAssignment 'Microsoft.Authorization/policyAssignments@2023-04-01' = {
   name: name
   identity: {
