@@ -30,7 +30,7 @@ jobs:
 
   prod:
     needs: tst
-    if: github.event_name == 'workflow_dispatch' || success()
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     uses: ./.github/workflows/tmp-managementGroup.yml
     with:
       topLevelManagementGroupName: gazelle
