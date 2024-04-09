@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   tst:
+    if: github.event_name == 'workflow_dispatch' || github.ref != 'refs/heads/main'
     uses: ./.github/workflows/tmp-managementGroup.yml
     with:
       topLevelManagementGroupName: gazelle
@@ -29,7 +30,6 @@ jobs:
     secrets: inherit
 
   prod:
-    needs: tst
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     uses: ./.github/workflows/tmp-managementGroup.yml
     with:
