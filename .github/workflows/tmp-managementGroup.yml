@@ -1,0 +1,115 @@
+name: template - management groups
+
+on:
+  workflow_call:
+    inputs:
+        topLevelManagementGroupName:
+            required: true
+            type: string
+        environment:
+            required: true
+            type: string
+        location:
+            required: true
+            type: string
+        policyIdentityResourceId:
+            type: string
+        managementGroupMainBicep:
+            default: ./bicep-main/managementGroups.bicep
+            type: string
+        managementGroupParameterFile:
+            default: ./parameters/managementGroups.bicepparam
+            type: string
+        policyMainBicep:
+            default: ./bicep-main/policies.bicep
+            type: string
+        policyParameters:
+            default: ./parameters/policies.bicepparam
+            type: string
+        customRolesMainBicep:
+            default: ./bicep-main/roleDefinitions.bicep
+            type: string
+        rbacMainBicep:
+            default: ./bicep-main/roleAssignments.bicep
+            type: string
+        rbacParameters:
+            required: true
+            type: string
+              
+
+jobs:
+  managementGroup:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      managementGroupId: ${{ format('{0}-{1}', inputs.topLevelManagementGroupName, inputs.environment) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+    
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.PLATFORM_IDENTITY_CLIENT_ID}}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          allow-no-subscriptions: true
+          enable-AzPSSession: false
+
+      - name: deploy management groups
+        uses: azure/cli@v1
+        with:
+            inlineScript: |
+              az deployment mg create \
+               --name management-groups \
+               --location ${{ inputs.location }} \
+               --management-group-id  ${{ env.managementGroupId }}\
+               --template-file ${{ inputs.managementGroupMainBicep}} \
+               --parameters ${{ inputs.managementGroupParameterFile }} \
+               --parameters environment=${{ inputs.environment }} \
+               --parameters topLevelManagementGroupName=${{ inputs.topLevelManagementGroupName }}
+
+      - name: custom roles
+        uses: azure/cli@v1
+        with:
+            inlineScript: |
+              az stack mg create \
+              --name custom-roles \
+              --location ${{ inputs.location }} \
+              --management-group-id ${{ env.managementGroupId }} \
+              --template-file ${{ inputs.customRolesMainBicep }} \
+              --parameters environment=${{ inputs.environment }} \
+              --deny-settings-mode None \
+              --action-on-unmanage deleteAll \
+              --yes
+
+      - name: deploy policies
+        uses: azure/cli@v1
+        with:
+            inlineScript: |
+              az stack mg create \
+              --name policies \
+              --location ${{ inputs.location }} \
+              --management-group-id ${{ env.managementGroupId }} \
+              --template-file ${{ inputs.policyMainBicep }} \
+              --parameters ${{ inputs.policyParameters }} \
+              --parameters environment=${{ inputs.environment }} \
+              --parameters location=${{ inputs.location }} \
+              --parameters policyIdentityResourceId=${{ inputs.policyIdentityResourceId }} \
+              --deny-settings-mode None \
+              --action-on-unmanage deleteAll \
+              --yes
+
+      - name: asign RBAC
+        uses: azure/cli@v1
+        with:
+            inlineScript: |
+              az stack mg create \
+              --name RBAC \
+              --location ${{ inputs.location }} \
+              --management-group-id ${{ env.managementGroupId }} \
+              --template-file ${{ inputs.rbacMainBicep }} \
+              --parameters ${{ inputs.rbacParameters }} \
+              --parameters environment=${{ inputs.environment }} \
+              --deny-settings-mode None \
+              --action-on-unmanage deleteAll \
+              --yes
