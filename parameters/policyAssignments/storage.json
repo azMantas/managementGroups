@@ -1,0 +1,15 @@
+{
+    "policyName": "storagebicep",
+    "policyDisplayName": "storage account policies",
+    "policyDefinitionId": "{{topLevel}}/providers/Microsoft.Authorization/policySetDefinitions/storagePolicies",
+    "scope": {
+        "CIS": {
+            "parameters": {},
+            "enforcementMode": "Default"
+        },
+        "playground": {
+            "parameters": {},
+            "enforcementMode": "donotenforce"
+        }
+    }
+}
