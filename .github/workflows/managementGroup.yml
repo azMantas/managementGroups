@@ -29,7 +29,8 @@ jobs:
     secrets: inherit
 
   prod:
-    if: github.event_name == 'workflow_dispatch' || ${{ github.event.pull_request.state == 'approved'}}
+    needs: tst
+    if: github.event_name == 'workflow_dispatch' || success()
     uses: ./.github/workflows/tmp-managementGroup.yml
     with:
       topLevelManagementGroupName: gazelle
