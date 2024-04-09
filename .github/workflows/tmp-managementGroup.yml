@@ -60,7 +60,7 @@ jobs:
         with:
             inlineScript: |
               az deployment mg create \
-               --name management-groups-${{ github.run_number }} \
+               --name management-groups \
                --location ${{ inputs.location }} \
                --management-group-id  ${{ env.managementGroupId }}\
                --template-file ${{ inputs.managementGroupMainBicep}} \

@@ -16,15 +16,7 @@ param rbac = {
       ]
     }
   ]
-  cis: [
-    {
-      roleDefinitionId: rbacMapping.Contributor
-      principalId: [
-        entraId.AzurePlatformEngineers
-      ]
-    }
-  ]
-  playground: [
+  platform: [
     {
       roleDefinitionId: rbacMapping.Contributor
       principalId: [
