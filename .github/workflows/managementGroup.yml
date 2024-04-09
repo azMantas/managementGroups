@@ -25,7 +25,7 @@ jobs:
       location: francecentral
       environment: tst
       policyIdentityResourceId: '/subscriptions/7e88dc1f-a45d-47dc-b986-785db0fea339/resourceGroups/platformIdentity-tst/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-platformIdentity-tst'
-      rbacParameters: './managementGroups/parameters/rbac-tst.bicepparam'
+      rbacParameters: './parameters/rbac-tst.bicepparam'
     secrets: inherit
 
   prod:
@@ -36,5 +36,5 @@ jobs:
       location: francecentral
       environment: prod
       policyIdentityResourceId: '/subscriptions/84e64f94-714d-4c07-9f03-f07af8380b36/resourceGroups/platformIdentity-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-platformIdentity-prod'
-      rbacParameters: './managementGroups/parameters/rbac-prod.bicepparam'
+      rbacParameters: './parameters/rbac-prod.bicepparam'
     secrets: inherit

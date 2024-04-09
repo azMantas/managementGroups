@@ -26,14 +26,14 @@ on:
         policyParameters:
             default: ./parameters/policies.bicepparam
             type: string
+        customRolesMainBicep:
+            default: ./bicep-main/roleDefinitions.bicep
+            type: string
         rbacMainBicep:
             default: ./bicep-main/roleAssignments.bicep
             type: string
         rbacParameters:
             required: true
-            type: string
-        customRolesMainBicep:
-            default: ./bicep-main/roleDefinitions.bicep
             type: string
               
 
@@ -79,7 +79,7 @@ jobs:
               --template-file ${{ inputs.customRolesMainBicep }} \
               --parameters environment=${{ inputs.environment }} \
               --deny-settings-mode None \
-              --delete-all true \
+              --action-on-unmanage deleteAll \
               --yes
 
       - name: deploy policies
@@ -96,7 +96,7 @@ jobs:
               --parameters location=${{ inputs.location }} \
               --parameters policyIdentityResourceId=${{ inputs.policyIdentityResourceId }} \
               --deny-settings-mode None \
-              --delete-all true \
+              --action-on-unmanage deleteAll \
               --yes
 
       - name: asign RBAC
@@ -111,5 +111,5 @@ jobs:
               --parameters ${{ inputs.rbacParameters }} \
               --parameters environment=${{ inputs.environment }} \
               --deny-settings-mode None \
-              --delete-all true \
+              --action-on-unmanage deleteAll \
               --yes
