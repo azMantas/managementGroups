@@ -4,4 +4,5 @@ param managementGroupName = [
   'CIS'
   'playground'
   'platform'
+  'agneSPecial'
 ]
